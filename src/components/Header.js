@@ -2,7 +2,7 @@ import logo from '../logo.svg';
 
 function Header() {
     return(
-    <header class="header">
+    <header className="header">
     <img src={logo} alt="логотип в шапке" className="header__logo"/>
     </header>
     )
