@@ -28,13 +28,13 @@ function Main(props) {
             })
     }, [])
 
-           
+
     return(
         <main className="main">
         <section className="profile">
             <div className="profile__image">
-            <img src={userAvatar} alt="Фотография в профиле" className="profile__avatar"/>
-            <button className='profile__edit-avatar' type="button" onClick={props.onEditAvatar} style={{ backgroundImage: `url(${userAvatar})` }} ></button>
+            <img src={userAvatar} alt="Фотография в профиле" className="profile__avatar" style={{ backgroundImage: `url(${userAvatar})` }}/>
+            <button className='profile__edit-avatar' type="button" onClick={props.onEditAvatar}></button>
         </div>
             <div className="profile__info">
                 <h1 className="profile__info-name">{userName}</h1>
@@ -47,7 +47,7 @@ function Main(props) {
             <ul className="elements__list">
                 {cards.map((card) => (
                     <Card
-                    key={card.id}
+                    key={card._id}
                     card={card}
                     onCardClick={props.onCardClick}
                     />
