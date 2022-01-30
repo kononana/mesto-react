@@ -52,29 +52,22 @@ class Api {
   }
 
   deleteCard(data) {
-      return fetch(`${this._baseUrl}/cards/${data._id}`, {
+      return fetch(`${this._baseUrl}/cards/${data}`, {
           method: 'DELETE',
           headers: this._headers
       })
           .then(this._checkResponse)
   }
 
-  addLike(data) {
-      return fetch(`${this._baseUrl}/cards/${data._id}/likes`, {
-          method: 'PUT',
-          headers: this._headers
-      })
-          .then(this._checkResponse)
+  changeLikeCardStatus(cardId, isLiked) {
+    return fetch(`${this._baseUrl}cards/likes/${cardId}`, {
+      method: (isLiked ? "PUT" : "DELETE"),
+      headers: this._headers,
+    })
+    .then(this._checkResponse)
   }
+  } 
 
-  deleteLike(data) {
-      return fetch(`${this._baseUrl}/cards/${data._id}/likes`, {
-          method: 'DELETE',
-          headers: this._headers
-      })
-          .then(this._checkResponse)
-  }
-}
 const api = new Api ({
   baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-32/',
   headers: {

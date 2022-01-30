@@ -5,12 +5,33 @@ import Footer from "./Footer.js";
 import Main from "./Main.js";
 import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
+import currentUserContext from "../contexts/CurrentUserContext";
+import api from "../utils/api";
 
 function App() {
     const[isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
     const[isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
     const[isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
     const[selectedCard, setSelectedCard] = React.useState({name:'', link:''})
+    const [currentUser, setCurrentUSer] = React.useState('');
+    const [cards, setCards] = React.useState([])
+
+  React.useEffect(() => {
+    api.getUserInfo()
+      .then((data) => {
+        setCurrentUSer(data)
+      })
+      .catch((error) => {
+        console.log(`Ошибочка: ${error}`)
+    })
+    api.getInitialCards()
+        .then((cards) => {
+                setCards(cards);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }, [])
   
   function handleEditProfileClick(){
     setIsEditProfilePopupOpen(true)
@@ -31,17 +52,38 @@ function App() {
   function handleCardClick(card){
     setSelectedCard(card)
   }
+  
+  function handleCardDelete(card) {
+    api.deleteCard(card._id)
+    .then(() => {
+      const delCard = cards.filter((e) => e._id !== card._id)
+      setCards(delCard);
+    })
+  }
+
+  function handleCardLike(card) {
+    // Снова проверяем, есть ли уже лайк на этой карточке
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    
+    // Отправляем запрос в API и получаем обновлённые данные карточки
+    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    });
+}
+
 
     return (
+      <currentUserContext.Provider value={currentUser}>
     <div className="page">
     <Header/>
-
-
     <Main
     onEditProfile={handleEditProfileClick}
     onEditAvatar={handleEditAvatarClick}
     onAddPlace={handleAddPlaceClick}
-    onCardClick={handleCardClick}/>
+    onCardClick={handleCardClick}
+    cards={cards}
+    onCardLike={handleCardLike}
+    onCardDelete={handleCardDelete} />
     
     <Footer/>
 
@@ -137,6 +179,7 @@ function App() {
      ></ImagePopup>
 
     </div>
+    </currentUserContext.Provider>
   );
 }
 
