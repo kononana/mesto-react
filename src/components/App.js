@@ -7,6 +7,7 @@ import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import currentUserContext from "../contexts/CurrentUserContext";
 import api from "../utils/api";
+import EditProfilePopup from './EditProfilePopup'
 
 function App() {
     const[isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
@@ -22,7 +23,7 @@ function App() {
         setCurrentUSer(data)
       })
       .catch((error) => {
-        console.log(`Ошибочка: ${error}`)
+        console.log(`Ошибка: ${error}`)
     })
     api.getInitialCards()
         .then((cards) => {
@@ -52,12 +53,23 @@ function App() {
   function handleCardClick(card){
     setSelectedCard(card)
   }
-  
+
   function handleCardDelete(card) {
     api.deleteCard(card._id)
     .then(() => {
       const delCard = cards.filter((e) => e._id !== card._id)
       setCards(delCard);
+    })
+  }
+
+  function handleUpdateUser(person){
+    api.changeUserInfo(person)
+    .then((person) => {
+      setCurrentUSer(person);
+      closeAllPopups()
+    })
+    .catch((error) => {
+      console.log(error)
     })
   }
 
@@ -87,36 +99,10 @@ function App() {
     
     <Footer/>
 
-
-    <PopupWithForm
-      name="edit-profile"
-      title="Редактировать профиль"
-      btntext="Сохранить"
-      isOpen={isEditProfilePopupOpen}
-      onClose={closeAllPopups}
-      >
-          <input 
-          name="name" 
-          type="text" 
-          id="name-input" 
-          placeholder="Имя" 
-          className="popup__input popup__input_field_name" 
-          required minLength="2" 
-          maxLength="40"
-          />
-          <span className="popup__error" id="name-input-error"></span>
-          <input 
-          name="about" 
-          type="text" 
-          id="job-input" 
-          placeholder="род деятельности" 
-          className="popup__input popup__input_field_job" 
-          required minLength="2" 
-          maxLength="200"
-          />
-          <span className="popup__error" id="job-input-error"></span>
-    </PopupWithForm>
-
+    <EditProfilePopup 
+    isOpen={isEditProfilePopupOpen} 
+    onClose={closeAllPopups} 
+    onUpdateUser={handleUpdateUser}/> 
 
     <PopupWithForm
      name="add-card"
@@ -124,6 +110,7 @@ function App() {
      btntext="Создать"
      isOpen={isAddPlacePopupOpen}
      onClose={closeAllPopups}
+     
      >
         <input 
         name="title" 
