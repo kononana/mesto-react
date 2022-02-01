@@ -8,6 +8,8 @@ import ImagePopup from "./ImagePopup.js";
 import currentUserContext from "../contexts/CurrentUserContext";
 import api from "../utils/api";
 import EditProfilePopup from './EditProfilePopup'
+import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 
 function App() {
     const[isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
@@ -73,6 +75,28 @@ function App() {
     })
   }
 
+  function handleUpdateAvatar(data) {
+    api.changeUserAvatar(data)
+      .then((data) => {
+        setCurrentUSer(data);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+  function handleAddPlaceSubmit(newCard) {
+    api.addCard(newCard)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка: ${err}`);
+      })
+  }
+
+
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -104,56 +128,20 @@ function App() {
     onClose={closeAllPopups} 
     onUpdateUser={handleUpdateUser}/> 
 
-    <PopupWithForm
-     name="add-card"
-     title="Новое место"
-     btntext="Создать"
+    <EditAvatarPopup 
+      isOpen={isEditAvatarPopupOpen} 
+      onClose={closeAllPopups}
+      onUpdateAvatar={handleUpdateAvatar} 
+      /> 
+
+    <AddPlacePopup
      isOpen={isAddPlacePopupOpen}
      onClose={closeAllPopups}
-     
-     >
-        <input 
-        name="title" 
-        id="cardName-input" 
-        type="text" 
-        placeholder="Название" 
-        className="popup__input popup__input_field_card-name" 
-        required minLength="2" 
-        maxLength="30"
-        />
-        <span className="popup__error" id="cardName-input-error"></span>
-        <input 
-        name="link" 
-        type="url" 
-        id="cardLink-input" 
-        placeholder="Ссылка на картинку" 
-        className="popup__input popup__input_field_card-link" 
-        required
-        />
-        <span className="popup__error" id="cardLink-input-error"></span>
-    </PopupWithForm>
+     onAddPlace={handleAddPlaceSubmit}
+     />
 
- 
+
     <PopupWithForm
-     name="type-avatar"
-     title="Обновить аватар"
-     btntext="Сохранить"
-     isOpen={isEditAvatarPopupOpen}
-     onClose={closeAllPopups}
-    >
-        <input 
-        type="url" 
-        id="avatar-link" 
-        name="avatar" 
-        placeholder="Ссылка на аватар" 
-        className="popup__input" 
-        required
-        />
-        <span id="avatar-link-error" className="popup__error"></span>
-     </PopupWithForm>
-
-
-     <PopupWithForm
      name="type_delete"
      title="Вы уверены?"
      btntext="Да">
