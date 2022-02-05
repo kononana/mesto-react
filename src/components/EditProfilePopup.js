@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import PopupWithForm from "./PopupWithForm";
 import currentUserContext from "../contexts/CurrentUserContext";
 
 function EditProfilePopup(props) {
     const currentUser = React.useContext(currentUserContext)
     // После загрузки текущего пользователя из API его данные будут использованы в управляемых компонентах.
-    React.useEffect(() => {
+   
+    useEffect(() => {
     setName(currentUser.name);
     setDescription(currentUser.about);
   }, [currentUser, props.isOpen]); 
 
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   function handleChangeName(e) {
       setName(e.target.value)
@@ -34,7 +35,7 @@ return (
 <PopupWithForm
     name="edit-profile"
     title="Редактировать профиль"
-    btntext="Сохранить"
+    butonText="Сохранить"
     isOpen={props.isOpen}
     onClose={props.onClose}
     onSubmit={handleSubmit}

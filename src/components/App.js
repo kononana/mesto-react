@@ -1,5 +1,4 @@
-import React from "react";
-import "../index.css";
+import React, { useState, useEffect } from "react";
 import Header from "./Header.js";
 import Footer from "./Footer.js";
 import Main from "./Main.js";
@@ -12,14 +11,14 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 
 function App() {
-    const[isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
-    const[isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-    const[isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-    const[selectedCard, setSelectedCard] = React.useState({name:'', link:''})
-    const [currentUser, setCurrentUSer] = React.useState('');
-    const [cards, setCards] = React.useState([])
+    const[isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
+    const[isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+    const[isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+    const[selectedCard, setSelectedCard] = useState({name:'', link:''})
+    const [currentUser, setCurrentUSer] = useState({});
+    const [cards, setCards] = useState([])
 
-  React.useEffect(() => {
+  useEffect(() => {
     api.getUserInfo()
       .then((data) => {
         setCurrentUSer(data)
@@ -59,15 +58,18 @@ function App() {
   function handleCardDelete(card) {
     api.deleteCard(card._id)
     .then(() => {
-      const delCard = cards.filter((e) => e._id !== card._id)
-      setCards(delCard);
+      const newCards = cards.filter((e) => e._id !== card._id)
+      setCards(newCards);
     })
+    .catch((err) => {
+      console.log(err);
+  })
   }
 
-  function handleUpdateUser(person){
-    api.changeUserInfo(person)
-    .then((person) => {
-      setCurrentUSer(person);
+  function handleUpdateUser(user){
+    api.changeUserInfo(user)
+    .then((user) => {
+      setCurrentUSer(user);
       closeAllPopups()
     })
     .catch((error) => {
@@ -92,7 +94,7 @@ function App() {
         closeAllPopups();
       })
       .catch((err) => {
-        console.log(`Ошибка: ${err}`);
+        console.log(err);
       })
   }
 
@@ -104,7 +106,10 @@ function App() {
     // Отправляем запрос в API и получаем обновлённые данные карточки
     api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    });
+    })
+    .catch((err) => {
+      console.log(`Ошибка: ${err}`);
+    })
 }
 
 
@@ -144,7 +149,7 @@ function App() {
     <PopupWithForm
      name="type_delete"
      title="Вы уверены?"
-     btntext="Да">
+     butonText="Да">
      </PopupWithForm>
 
 

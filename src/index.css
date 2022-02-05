@@ -46,6 +46,7 @@
 @import url(./blocks/profile/__edit-avatar/profile__edit-avatar.css);
 @import url(./blocks/profile/__image/profile__image.css);
 @import url(./blocks/popup/__submit/popup__submit_avatar.css);
-@import url(./blocks/element/__delete-button/element__delete_hidden.css);
+@import url(./blocks/element/__delete-button/element__delete-button_hidden.css);
 @import url(./blocks/popup/__title/popup__title_type_delete.css);
 @import url(./blocks/popup/__submit/_delete/popup__submit_delete.css);
+@import url(./blocks/element/__delete-button/element__delete-button_visible.css);
